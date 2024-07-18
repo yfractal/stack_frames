@@ -76,6 +76,16 @@ static VALUE buffer_capture(VALUE self) {
     return INT2NUM(buffer->length);
 }
 
+static VALUE buffer_caputre_thread(VALUE self, VALUE thread) {
+    buffer_t *buffer;
+
+    TypedData_Get_Struct(self, buffer_t, &buffer_data_type, buffer);
+
+     buffer->length = rb_profile_thread_frames(thread, 0, buffer->capacity, buffer->profile_frames, buffer->lines);
+
+    return INT2NUM(buffer->length);
+}
+
 static VALUE buffer_length(VALUE self) {
     buffer_t *buffer;
 
@@ -140,6 +150,7 @@ void stack_buffer_define(VALUE mStackFrames) {
     VALUE cBuffer = rb_define_class_under(mStackFrames, "Buffer", rb_cObject);
     rb_define_alloc_func(cBuffer, buffer_allocate);
     rb_define_method(cBuffer, "initialize", buffer_initialize, 1);
+    rb_define_method(cBuffer, "caputre_thread", buffer_caputre_thread, 1);
     rb_define_method(cBuffer, "length", buffer_length, 0);
     rb_define_method(cBuffer, "capacity", buffer_capacity, 0);
     rb_define_method(cBuffer, "capture", buffer_capture, 0);
