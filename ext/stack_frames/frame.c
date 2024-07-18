@@ -64,6 +64,7 @@ DEFINE_FRAME_ACCESSOR(first_lineno)
 DEFINE_FRAME_ACCESSOR(classpath)
 DEFINE_FRAME_ACCESSOR(singleton_method_p)
 DEFINE_FRAME_ACCESSOR(method_name)
+DEFINE_FRAME_ACCESSOR(generation)
 DEFINE_FRAME_ACCESSOR(qualified_method_name)
 
 void stack_frame_define(VALUE mStackFrames) {
@@ -81,5 +82,6 @@ void stack_frame_define(VALUE mStackFrames) {
     rb_define_method(cFrame, "classpath", frame_classpath, 0);
     rb_define_method(cFrame, "singleton_method?", frame_singleton_method_p, 0);
     rb_define_method(cFrame, "method_name", frame_method_name, 0);
+    rb_define_method(cFrame, "generation", frame_generation, 0);
     rb_define_method(cFrame, "qualified_method_name", frame_qualified_method_name, 0);
 }
