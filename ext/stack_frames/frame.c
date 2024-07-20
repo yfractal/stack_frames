@@ -44,6 +44,12 @@ static VALUE frame_profile_frame(VALUE self) {
     return stack_buffer_profile_frame(frame->buffer, frame->index);
 }
 
+static VALUE frame_frame(VALUE self) {
+    frame_t *frame;
+    TypedData_Get_Struct(self, frame_t, &frame_data_type, frame);
+    return stack_buffer_frame(frame->buffer, frame->index);
+}
+
 static VALUE frame_lineno(VALUE self) {
     frame_t *frame;
     TypedData_Get_Struct(self, frame_t, &frame_data_type, frame);
@@ -53,6 +59,11 @@ static VALUE frame_lineno(VALUE self) {
 #define DEFINE_FRAME_ACCESSOR(func_name) \
     static VALUE frame_##func_name(VALUE self) { \
         return rb_profile_frame_##func_name(frame_profile_frame(self)); \
+    }
+
+#define DEFINE_F_ACCESSOR(func_name) \
+    static VALUE f_##func_name(VALUE self) { \
+        return rb_frame_##func_name(frame_frame(self)); \
     }
 
 DEFINE_FRAME_ACCESSOR(path)
@@ -66,6 +77,9 @@ DEFINE_FRAME_ACCESSOR(singleton_method_p)
 DEFINE_FRAME_ACCESSOR(method_name)
 DEFINE_FRAME_ACCESSOR(generation)
 DEFINE_FRAME_ACCESSOR(qualified_method_name)
+
+DEFINE_F_ACCESSOR(generation)
+DEFINE_F_ACCESSOR(trace_id)
 
 void stack_frame_define(VALUE mStackFrames) {
     cFrame = rb_define_class_under(mStackFrames, "Frame", rb_cObject);
@@ -84,4 +98,7 @@ void stack_frame_define(VALUE mStackFrames) {
     rb_define_method(cFrame, "method_name", frame_method_name, 0);
     rb_define_method(cFrame, "generation", frame_generation, 0);
     rb_define_method(cFrame, "qualified_method_name", frame_qualified_method_name, 0);
+
+    rb_define_method(cFrame, "f_generation", f_generation, 0);
+    rb_define_method(cFrame, "f_trace_id", f_trace_id, 0);
 }
