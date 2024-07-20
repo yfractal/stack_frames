@@ -96,6 +96,7 @@ static VALUE f_generation(VALUE self) {
 }
 
 DEFINE_F_ACCESSOR(trace_id)
+DEFINE_F_ACCESSOR(method_name)
 
 void stack_frame_define(VALUE mStackFrames) {
     cFrame = rb_define_class_under(mStackFrames, "Frame", rb_cObject);
@@ -117,4 +118,5 @@ void stack_frame_define(VALUE mStackFrames) {
 
     rb_define_method(cFrame, "f_generation", f_generation, 0);
     rb_define_method(cFrame, "f_trace_id", f_trace_id, 0);
+    rb_define_method(cFrame, "f_method_name", f_method_name, 0);
 }
