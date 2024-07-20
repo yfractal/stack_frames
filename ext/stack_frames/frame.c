@@ -44,11 +44,11 @@ static VALUE frame_profile_frame(VALUE self) {
     return stack_buffer_profile_frame(frame->buffer, frame->index);
 }
 
-static VALUE frame_frame(VALUE self) {
-    frame_t *frame;
-    TypedData_Get_Struct(self, frame_t, &frame_data_type, frame);
-    return stack_buffer_frame(frame->buffer, frame->index);
-}
+// static VALUE frame_frame(VALUE self) {
+//     frame_t *frame;
+//     TypedData_Get_Struct(self, frame_t, &frame_data_type, frame);
+//     return stack_buffer_frame(frame->buffer, frame->index);
+// }
 
 static VALUE xframe(VALUE self) {
     frame_t *frame;
@@ -86,6 +86,8 @@ DEFINE_FRAME_ACCESSOR(qualified_method_name)
 
 typedef struct {
     int generation;
+    int trace_id;
+    VALUE method_name;
 } framex_t;
 
 static VALUE f_generation(VALUE self) {
@@ -95,8 +97,22 @@ static VALUE f_generation(VALUE self) {
    return INT2NUM(f->generation);
 }
 
-DEFINE_F_ACCESSOR(trace_id)
-DEFINE_F_ACCESSOR(method_name)
+static VALUE f_trace_id(VALUE self) {
+   VALUE frame = xframe(self);
+   framex_t *f = (framex_t *)frame;
+
+   return INT2NUM(f->trace_id);
+}
+
+static VALUE f_method_name(VALUE self) {
+   VALUE frame = xframe(self);
+   framex_t *f = (framex_t *)frame;
+
+   return f->method_name;
+}
+
+// DEFINE_F_ACCESSOR(trace_id)
+// DEFINE_F_ACCESSOR(method_name)
 
 void stack_frame_define(VALUE mStackFrames) {
     cFrame = rb_define_class_under(mStackFrames, "Frame", rb_cObject);
