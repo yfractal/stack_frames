@@ -3,6 +3,7 @@
 
 typedef struct {
     VALUE *profile_frames;
+    VALUE *xframes;
     VALUE *frames;
     int *lines;
     int length, capacity;
@@ -59,6 +60,7 @@ static VALUE buffer_initialize(VALUE self, VALUE size) {
     buffer->profile_frames = ALLOC_N(VALUE, capacity);
     buffer->lines = ALLOC_N(int, capacity);
     buffer->frames = ALLOC_N(VALUE, capacity);
+    buffer->xframes = ALLOC_N(VALUE, capacity);
 
     buffer->capacity = 0;
     for (int i = 0; i < capacity; i++) {
@@ -91,7 +93,7 @@ static VALUE caputre_frames(VALUE self, VALUE thread) {
 
     TypedData_Get_Struct(self, buffer_t, &buffer_data_type, buffer);
 
-     buffer->length = rb_thread_frames(thread, 0, buffer->capacity, buffer->profile_frames);
+     buffer->length = rb_thread_frames(thread, 0, buffer->capacity, buffer->xframes);
 
     return INT2NUM(buffer->length);
 }
@@ -155,6 +157,11 @@ VALUE stack_buffer_frame(VALUE buffer_obj, int index) {
     TypedData_Get_Struct(buffer_obj, buffer_t, &buffer_data_type, buffer);
     return buffer->profile_frames[index];
 }
+VALUE stack_buffer_xframe(VALUE buffer_obj, int index) {
+    buffer_t *buffer;
+    TypedData_Get_Struct(buffer_obj, buffer_t, &buffer_data_type, buffer);
+    return buffer->xframes[index];
+}
 
 int stack_buffer_frame_lineno(VALUE buffer_obj, int index) {
     buffer_t *buffer;
@@ -167,11 +174,12 @@ void stack_buffer_define(VALUE mStackFrames) {
     rb_define_alloc_func(cBuffer, buffer_allocate);
     rb_define_method(cBuffer, "initialize", buffer_initialize, 1);
     rb_define_method(cBuffer, "caputre_thread", buffer_caputre_thread, 1);
-    rb_define_method(cBuffer, "caputre_frames", caputre_frames, 1);
     rb_define_method(cBuffer, "length", buffer_length, 0);
     rb_define_method(cBuffer, "capacity", buffer_capacity, 0);
     rb_define_method(cBuffer, "capture", buffer_capture, 0);
     rb_define_method(cBuffer, "[]", buffer_aref, 1);
     rb_define_method(cBuffer, "each", buffer_each, 0);
     rb_define_method(cBuffer, "find", buffer_find, 0);
+
+    rb_define_method(cBuffer, "caputre_frames", caputre_frames, 1);
 }

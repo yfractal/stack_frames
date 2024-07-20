@@ -50,6 +50,12 @@ static VALUE frame_frame(VALUE self) {
     return stack_buffer_frame(frame->buffer, frame->index);
 }
 
+static VALUE xframe(VALUE self) {
+    frame_t *frame;
+    TypedData_Get_Struct(self, frame_t, &frame_data_type, frame);
+    return stack_buffer_xframe(frame->buffer, frame->index);
+}
+
 static VALUE frame_lineno(VALUE self) {
     frame_t *frame;
     TypedData_Get_Struct(self, frame_t, &frame_data_type, frame);
@@ -78,7 +84,17 @@ DEFINE_FRAME_ACCESSOR(method_name)
 DEFINE_FRAME_ACCESSOR(generation)
 DEFINE_FRAME_ACCESSOR(qualified_method_name)
 
-DEFINE_F_ACCESSOR(generation)
+typedef struct {
+    int generation;
+} framex_t;
+
+static VALUE f_generation(VALUE self) {
+   VALUE frame = xframe(self);
+   framex_t *f = (framex_t *)frame;
+
+   return INT2NUM(f->generation);
+}
+
 DEFINE_F_ACCESSOR(trace_id)
 
 void stack_frame_define(VALUE mStackFrames) {
