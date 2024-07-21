@@ -13,9 +13,10 @@ static void buffer_mark(void *ptr)
 {
     buffer_t *buffer = ptr;
 
-    for (int i = 0; i < buffer->length; i++) {
-        rb_gc_mark(buffer->profile_frames[i]);
-    }
+    /* for (int i = 0; i < buffer->length; i++) { */
+    /*     rb_gc_mark(buffer->profile_frames[i]); */
+    /* } */
+
     for (int i = 0; i < buffer->capacity; i++) {
         rb_gc_mark(buffer->frames[i]);
     }
