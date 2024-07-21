@@ -88,6 +88,7 @@ typedef struct {
     int trace_id;
     VALUE method_name;
     int method_type;
+    int lineno;
 } framex_t;
 
 static VALUE f_generation(VALUE self) {
@@ -118,6 +119,14 @@ static VALUE f_method_type(VALUE self) {
    return INT2NUM(f->method_type);
 }
 
+static VALUE f_lineno(VALUE self) {
+   VALUE frame = xframe(self);
+   framex_t *f = (framex_t *)frame;
+
+   return INT2NUM(f->lineno);
+}
+
+
 // DEFINE_F_ACCESSOR(trace_id)
 // DEFINE_F_ACCESSOR(method_name)
 
@@ -142,4 +151,5 @@ void stack_frame_define(VALUE mStackFrames) {
     rb_define_method(cFrame, "f_trace_id", f_trace_id, 0);
     rb_define_method(cFrame, "f_method_name", f_method_name, 0);
     rb_define_method(cFrame, "f_method_type", f_method_type, 0);
+     rb_define_method(cFrame, "f_lineno", f_lineno, 0);
 }
