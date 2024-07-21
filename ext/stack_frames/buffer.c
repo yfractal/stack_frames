@@ -98,6 +98,11 @@ static VALUE caputre_frames(VALUE self, VALUE thread) {
     return INT2NUM(buffer->length);
 }
 
+static VALUE new_trace(VALUE self, VALUE trace_id) {
+    rb_set_trace_id_and_generation(NUM2INT(trace_id), 0);
+    return Qnil;
+}
+
 static VALUE buffer_length(VALUE self) {
     buffer_t *buffer;
 
@@ -182,4 +187,5 @@ void stack_buffer_define(VALUE mStackFrames) {
     rb_define_method(cBuffer, "find", buffer_find, 0);
 
     rb_define_method(cBuffer, "caputre_frames", caputre_frames, 1);
+    rb_define_method(cBuffer, "set_trace_id_and_generation", new_trace, 1);
 }
