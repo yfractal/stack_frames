@@ -6,6 +6,7 @@ module StackFrames
     def initialize
       @graph = GraphViz.new( :G, :type => :digraph )
       @node_mapping = {}
+      @linked = {}
     end
 
     def create_node(id, name)
@@ -14,7 +15,14 @@ module StackFrames
     end
 
     def add_link(from_node, to_node)
+      @linked[from_node] ||= []
+      @linked[from_node] << to_node
+      @linked[from_node].uniq!
       @graph.add_edges(from_node, to_node)
+    end
+
+    def linked?(from_node, to_node)
+      @linked[from_node] && @linked[from_node].include?(to_node)
     end
 
     def find_or_create_node(id, name)
@@ -47,7 +55,7 @@ module StackFrames
 
         while (pre_frame = frames[i-1]) && i > 0
           pre_node = @drawer.find_or_create_node(node_id(pre_frame), node_name(pre_frame))
-          @drawer.add_link(current_node, pre_node)
+          @drawer.add_link(current_node, pre_node) unless @drawer.linked?(current_node, pre_node)
 
           current_node = pre_node
           i -= 1
