@@ -62,7 +62,9 @@ module StackFrames
         end
       end
 
-      @drawer.draw("#{name}-#{rand(100)}.png")
+      file = "#{name}-#{rand(100)}.png"
+      puts "write to file=#{file}."
+      @drawer.draw(file)
     end
 
     def node_name(frame)
